@@ -1,5 +1,7 @@
 class Acronym
+	ABBREVIATURE = /\b[a-zA-Z]/
+
 	def self.abbreviate
-		string.scan(/\b[a-zA-Z]/).join.upcase
+		string.scan(ABBREVIATURE).join.upcase
 	end
 end
