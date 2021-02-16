@@ -46,24 +46,31 @@ class Grep
   end
 
   def create_pattern
-    i = flags.include?(CASE_INSENSITIVE_FLAG) ? Regexp::IGNORECASE : false
-    x = flags.include?(ONLY_MATCH_FLAG) ? "^#{pattern}$" : pattern
-    @pattern = Regexp.new(x, i)
+    @pattern = Regexp.new(x_flag(flags), i_flag(flags))
   end
 
   def need_index?(index)
-    flags.include?(LINE_NUMBERS_FLAG) ? "#{index + 1}:" : ''
+    "#{index + 1}:" if flags.include?(LINE_NUMBERS_FLAG)
   end
 
   def multi_files?(file)
-    files.size > 1 ? "#{file}:" : ''
+    "#{file}:" if files.size > 1
   end
 
   def v_flag(string)
-    @flags.include?(INVERT_FLAG) ? !string.match(pattern) : string.match(pattern)
+    matching = string.match(pattern)
+    @flags.include?(INVERT_FLAG) ? !matching : matching
   end
 
   def l_flag(file, lines)
     lines.any? { |line| v_flag(line) } ? file : nil
+  end
+
+  def i_flag(flags)
+    flags.include?(CASE_INSENSITIVE_FLAG) ? Regexp::IGNORECASE : false
+  end
+
+  def x_flag(flags)
+    flags.include?(ONLY_MATCH_FLAG) ? "^#{pattern}$" : pattern
   end
 end
